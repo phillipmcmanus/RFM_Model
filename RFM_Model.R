@@ -11,7 +11,8 @@ library("ggplot2")
 library(factoextra)
 
 #Read in a sample dataset of store transactions
-#This sample only contains the fields we need, Customer ID, Order ID, Order Date and Order Amount (Sales)
+#This sample only contains the fields we need: 
+#Customer ID, Order ID, Order Date and Order Amount (Sales)
 transactions <- read.csv('data/store_transactions.csv')
 
 #Remove any records that have NA in the required fields
@@ -57,17 +58,46 @@ rfm_data$frequency_score <- as.numeric(rfm_data$frequency_score)
 rfm_data$monetary_score <- as.numeric(rfm_data$monetary_score)
 
 
-
-ggplot(rfm_data, aes(recency_score, frequency_score)) +
-  geom_jitter(aes(colour = monetary_score), width = 0.25, height = 0.25)  
-
+#Plot the RFM metrics and scores in different ways to visualize the data
 ggplot(rfm_data, aes(recency, frequency)) +
-  geom_jitter(aes(colour = monetary_score), size = 0.5)  
+  geom_jitter(aes(colour = monetary_score)) +
+  labs(title = "Recency vs Frequency",
+       subtitle = "w/ Monetary Score Weighting",
+       x = "Recency",
+       y = "Frequency",
+       colour = "Monetary Score")
+
+ggplot(rfm_data, aes(recency, monetary)) +
+  geom_jitter(aes(colour = frequency_score)) +
+  labs(title = "Recency vs Monetary",
+       subtitle = "w/ Frequency Score Weighting",
+       x = "Recency",
+       y = "Monetary",
+       colour = "Frequency Score")
+
+ggplot(rfm_data, aes(frequency, monetary)) +
+  geom_jitter(aes(colour = recency_score)) +
+  labs(title = "Frequency vs Monetary",
+       subtitle = "w/ Recency Score Weighting",
+       x = "Frequency",
+       y = "Monetary",
+       colour = "Recency Score")
 
 ggplot(rfm_data, aes(recency_score, frequency_score)) +
-  geom_tile(aes(fill = monetary_score)) +
-  scale_fill_gradient(low = "white", high = "navy")  
+  geom_jitter(aes(colour = monetary_score), width = 0.25, height = 0.25) +
+  labs(title = "Recency vs Frequency Scores",
+       subtitle = "w/ Monetary Score Weighting",
+       x = "Recency Score",
+       y = "Frequency Score",
+       colour = "Monetary Score")
 
+ggplot(rfm_data, aes(frequency_score, monetary_score)) +
+  geom_jitter(aes(colour = recency_score), width = 0.25, height = 0.25) +
+  labs(title = "Frequency vs Monetary Scores",
+       subtitle = "w/ Monetary Score Weighting",
+       x = "Frequency Score",
+       y = "Monetary Score",
+       colour = "Recency Score")
 
 #Save RFM Scores to a separate data frame
 rfm_scores <- rfm_data[,c("recency_score", "frequency_score", "monetary_score")]
@@ -87,7 +117,12 @@ rfm_centers <- data.frame(rfm_groups$centers)
 
 #Plot the scores for each cluster
 ggplot(rfm_centers, aes(recency_score, frequency_score, size = monetary_score)) +
-  geom_point() + scale_size(range = c(1, 15)) 
+  geom_point() + scale_size(range = c(1, 15)) +
+  labs(title = "Recency vs Frequency Scores",
+       subtitle = "w/ Monetary Score Sizes",
+       x = "Recency Score",
+       y = "Frequency Score",
+       size = "Monetary Score")
 
 #Add the cluster numbers to the original dataset
 rfm_data <- cbind(rfm_data, "segment" = rfm_groups$cluster)
@@ -101,7 +136,12 @@ rfm_segments <- rfm_data %>% group_by(segment) %>%
 #Display the table of segment averages and the visual plot of them
 rfm_segments
 ggplot(rfm_segments, aes(avg_recency, avg_frequency, size = avg_monetary)) +
-  geom_point() + scale_size(range = c(1, 15))
+  geom_point() + scale_size(range = c(1, 15)) +
+  labs(title = "Recency vs Frequency Mean of Clusters",
+       subtitle = "w/ Monetary Mean Sizes",
+       x = "Recency Mean",
+       y = "Frequency Mean",
+       size = "Monetary Mean")
 
 
 
