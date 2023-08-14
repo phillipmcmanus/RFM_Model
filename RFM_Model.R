@@ -117,7 +117,7 @@ rfm_centers <- data.frame(rfm_groups$centers)
 
 #Plot the scores for each cluster
 ggplot(rfm_centers, aes(recency_score, frequency_score, size = monetary_score)) +
-  geom_point() + scale_size(range = c(1, 15)) +
+  geom_point(color = "navy") + scale_size(range = c(1, 15)) +
   labs(title = "Recency vs Frequency Scores",
        subtitle = "w/ Monetary Score Sizes",
        x = "Recency Score",
@@ -135,8 +135,14 @@ rfm_segments <- rfm_data %>% group_by(segment) %>%
 
 #Display the table of segment averages and the visual plot of them
 rfm_segments
+library(ggrepel)
 ggplot(rfm_segments, aes(avg_recency, avg_frequency, size = avg_monetary)) +
-  geom_point() + scale_size(range = c(1, 15)) +
+  geom_point(color = "navy") + scale_size(range = c(1, 15)) +
+  geom_label_repel(aes(label = segment),
+                   box.padding   = 0.35, 
+                   point.padding = 0.5,
+                   segment.color = 'grey50',
+                   size = 5) +
   labs(title = "Recency vs Frequency Mean of Clusters",
        subtitle = "w/ Monetary Mean Sizes",
        x = "Recency Mean",
