@@ -51,11 +51,11 @@ rfm_data$monetary_score <- cut(rfm_data$monetary,
 rfm_data$recency_score[is.na(rfm_data$recency_score)] <- 1
 rfm_data$frequency_score[is.na(rfm_data$frequency_score)] <- 1
 rfm_data$monetary_score[is.na(rfm_data$monetary_score)] <- 1
-
+rfm_data
 #Convert scores to numeric values
-rfm_data$recency_score <- as.numeric(rfm_data$recency_score)
-rfm_data$frequency_score <- as.numeric(rfm_data$frequency_score)
-rfm_data$monetary_score <- as.numeric(rfm_data$monetary_score)
+#rfm_data$recency_score <- as.numeric(rfm_data$recency_score)
+#rfm_data$frequency_score <- as.numeric(rfm_data$frequency_score)
+#rfm_data$monetary_score <- as.numeric(rfm_data$monetary_score)
 
 
 #Plot the RFM metrics and scores in different ways to visualize the data
@@ -109,8 +109,8 @@ fviz_nbclust(rfm_scores, kmeans, method = "wss")  #The result of this plot shows
 set.seed(314)
 rfm_groups <- kmeans(rfm_scores, centers = 5, nstart = 25)
 
-#Plot the distribution of the clusters
-fviz_cluster(rfm_groups, geom = "point", data = rfm_scores)
+#View the average scores for each cluster
+rfm_groups$centers
 
 #Create a new data frame using the Centers data from the kmeans function
 rfm_centers <- data.frame(rfm_groups$centers)
@@ -129,7 +129,8 @@ rfm_data <- cbind(rfm_data, "segment" = rfm_groups$cluster)
 
 #Summarise the mean of each metrics for each cluster
 rfm_segments <- rfm_data %>% group_by(segment) %>%
-  summarise(avg_recency = round(mean(recency)),
+  summarise(segment_size = length(segment),
+            avg_recency = round(mean(recency)),
             avg_frequency = round(mean(frequency)),
             avg_monetary = round(mean(monetary)))
 
